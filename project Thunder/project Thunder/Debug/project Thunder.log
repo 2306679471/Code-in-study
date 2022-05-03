@@ -1,0 +1,5 @@
+﻿  Game.cpp
+E:\飞思资料\项目\project Thunder\project Thunder\Game.cpp(155,12): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+  main.cpp
+  正在生成代码...
+  project Thunder.vcxproj -> E:\飞思资料\项目\project Thunder\Debug\project Thunder.exe
