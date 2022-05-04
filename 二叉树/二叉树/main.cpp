@@ -240,11 +240,8 @@ bool compare(Tree* left, Tree* right)
 	else if (left->a != right->a)
 	{
 		return false;
-	}
-	bool outside = compare(left->lchild, right->rchild);   // 左子树：左、 右子树：右
-	bool inside = compare(left->rchild, right->lchild);    // 左子树：右、 右子树：左
-	bool isSame = outside && inside;                    // 左子树：中、 右子树：中 （逻辑处理）
-	return isSame;
+	}     
+	return compare(left->lchild, right->rchild) && compare(left->rchild, right->lchild);
 }
 bool isSymmetric(Tree* root)//判断树是不是对称二叉树
 {
@@ -343,7 +340,7 @@ int getnodenumbyite(Tree* root)
 	}
 	return num;
 }
-int getHeight(Tree* root)
+int getHeight(Tree* root)//获取树的高度
 {
 	if (nullptr == root)
 	{
@@ -357,7 +354,7 @@ int getHeight(Tree* root)
 		return -1;
 	return abs(left - right) > 1 ? -1 : 1 + max(left, right);
 }
-bool isbalencetree(Tree* root)
+bool isbalencetree(Tree* root)//判断一棵树是否是一个平衡二叉树
 {
 	return getHeight(root) == -1 ? false : true;
 }
@@ -388,6 +385,68 @@ vector<string> allpathoftree(Tree* root)
 		{
 			treest.push(ptemp->lchild);
 			pathst.push(path + "->" + to_string(ptemp->a));
+		}
+	}
+	return result;
+}
+bool isSameTree(Tree* tree1,Tree* tree2) {//判断两棵树是否相同
+	return compare(tree1, tree2);
+}
+int getSumOfLeftLeaves(Tree* root) {//获取所有左叶子节点的值的和
+	if (nullptr == root) return 0;
+	int temp = 0;
+	if (root->lchild && !root->lchild->lchild && !root->lchild->rchild) {
+		temp = root->lchild->a;
+	}
+	return temp + getSumOfLeftLeaves(root->lchild) + getSumOfLeftLeaves(root->rchild);
+}
+int getSumOfRightLeaves(Tree* root) {//获取所有右叶子节点的值的和
+	if (nullptr == root) return 0;
+	int temp = 0;
+	if (root->rchild && !root->rchild->lchild && !root->rchild->rchild) {
+		temp = root->rchild->a;
+	}
+	return temp + getSumOfRightLeaves(root->lchild) + getSumOfRightLeaves(root->rchild);
+}
+int maxlen = INT_MIN;
+int maxvalue;
+void traversal(Tree* root, int Leftlen) {
+	if (!root->lchild && !root->rchild) {
+		if (maxlen < Leftlen) {
+			maxlen = Leftlen;
+			maxvalue = root->a;
+		}
+		return;
+	}
+	if (root->lchild) {
+		Leftlen++;
+		traversal(root->lchild, Leftlen);
+		Leftlen--;
+	}
+	if (root->rchild) {
+		Leftlen++;
+		traversal(root->rchild, Leftlen);
+		Leftlen--;//回溯
+	}
+	return;
+}
+int getTheLeftBottomValueOfTree(Tree* root) {//获取树左下角的值
+	if (nullptr == root) return 0;
+	traversal(root, 0);
+	return maxvalue;
+}
+int getTheLeftBottomValueofTree(Tree* root) {
+	queue<Tree*> que;
+	if (!root) que.push(root);
+	int result;
+	while (!que.empty()) {
+		int size = que.size();
+		for (int i = 0; i < size; i++) {
+			Tree* ptemp = que.front();
+			que.pop();
+			if (0 == i) result = ptemp->a;
+			if (ptemp->lchild) que.push(ptemp->lchild);
+			if (ptemp->rchild) que.push(ptemp->rchild);
 		}
 	}
 	return result;
