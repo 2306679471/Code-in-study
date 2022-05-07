@@ -1,8 +1,12 @@
-﻿生成启动时间为 2022/5/4 13:59:15。
+﻿生成启动时间为 2022/5/5 16:15:00。
      1>项目“E:\Desktop\project1\二叉树\二叉树\二叉树.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
          F:\vs\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
+     1>e:\desktop\project1\二叉树\二叉树\main.cpp(469): warning C4018: “<”: 有符号/无符号不匹配
+     1>e:\desktop\project1\二叉树\二叉树\main.cpp(480): warning C4018: “<”: 有符号/无符号不匹配
+     1>e:\desktop\project1\二叉树\二叉树\main.cpp(509): warning C4018: “<”: 有符号/无符号不匹配
+     1>e:\desktop\project1\二叉树\二叉树\main.cpp(510): warning C4018: “<”: 有符号/无符号不匹配
        Link:
          F:\vs\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Desktop\project1\二叉树\Debug\二叉树.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\Desktop\project1\二叉树\Debug\二叉树.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Desktop\project1\二叉树\Debug\二叉树.lib" /MACHINE:X86 Debug\main.obj
          二叉树.vcxproj -> E:\Desktop\project1\二叉树\Debug\二叉树.exe
@@ -10,4 +14,4 @@
 
 生成成功。
 
-已用时间 00:00:03.90
+已用时间 00:00:00.48

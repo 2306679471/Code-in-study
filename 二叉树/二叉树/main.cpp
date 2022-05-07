@@ -435,7 +435,7 @@ int getTheLeftBottomValueOfTree(Tree* root) {//获取树左下角的值
 	traversal(root, 0);
 	return maxvalue;
 }
-int getTheLeftBottomValueofTree(Tree* root) {
+int getTheLeftBottomValueofTree(Tree* root) {//通过层序遍历获取左下角叶子节点的值
 	queue<Tree*> que;
 	if (!root) que.push(root);
 	int result;
@@ -451,19 +451,156 @@ int getTheLeftBottomValueofTree(Tree* root) {
 	}
 	return result;
 }
+bool isEligible(Tree* root, int count) {//给定一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和
+	if (!root) return false;
+	if (!root->lchild && !root->rchild &&count == root->a) {
+		return true;
+	}
+	return isEligible(root->lchild, count - root->a) || isEligible(root->rchild, count - root->a);
+}
+Tree* CreateMaxTree(vector<int> nums) {//创建最大二叉树
+	Tree* root = new Tree(0);
+	if (nums.size() == 1) {
+		root->a = nums[0];
+		return root;
+	}
+	int maxindex=0;
+	int maxvalue=0;
+	for (int i = 0; i < nums.size(); i++) {
+		if (nums[i]>maxvalue) {
+			maxindex = i;
+			maxvalue = nums[i];
+		}
+	}
+	root->a = maxvalue;
+	if (maxindex > 0) {
+		vector<int> newVec(nums.begin(), nums.begin() + maxindex);
+		root->lchild = CreateMaxTree(newVec);
+	}
+	if (maxindex < nums.size() - 1) {
+		vector<int> newVec(nums.begin() + maxindex+1, nums.end());
+		root->rchild = CreateMaxTree(newVec);
+	}
+	return root;
+}
+Tree* MergeTwoTrees(Tree* root1, Tree* root2) {//合并两棵树
+	if (!root1 && !root2) {
+		return nullptr;
+	}
+	if (!root1) {
+		return root2;
+	}
+	if (!root2) {
+		return root1;
+	}
+	root1->a += root2->a;
+	root1->lchild = MergeTwoTrees(root1->lchild, root2->lchild);
+	root1->rchild = MergeTwoTrees(root1->rchild, root2->rchild);
+	return root1;
+}
+Tree* MergeTwoTreesByiterarion(Tree* root1, Tree* root2) {
+	if (!root1) {
+		return root2;
+	}
+	if (!root2) {
+		return root1;
+	}
+	queue<Tree*> qu;
+	qu.push(root1);
+	qu.push(root2);
+	while (!qu.empty()) {
+		Tree* p1 = qu.front();
+		qu.pop();
+		Tree* p2 = qu.front();
+		qu.pop();
+		if (p1->lchild && p2->lchild) {
+			qu.push(p1->lchild);
+			qu.push(p2->lchild);
+		}
+		if (p1->rchild && p2->rchild) {
+			qu.push(p1->rchild);
+			qu.push(p2->rchild);
+		}
+		if (!p1->lchild &&p2->lchild) {
+			p1->lchild = p2->lchild;
+		}
+		if (p1->rchild && !p2->rchild) {
+			p1->rchild = p2->rchild;
+		}
+
+	}
+	return root1;
+}
+Tree* SearchBST(Tree* root,int val) {//在有序树中找到符合条件的节点
+	if (!root || root->a == val) {
+		return root;
+	}
+	return root->a > val ? SearchBST(root->lchild, val) : SearchBST(root->rchild, val);
+}
+Tree* SearchBSTByIteration(Tree* root, int val) {//同上，迭代法
+	Tree* ptemp = root;
+	while (ptemp) {
+		if (ptemp->a > val) {
+			ptemp = ptemp->lchild;
+		}
+		else if (ptemp->a < val) {
+			ptemp = ptemp->rchild;
+		}
+		else {
+			return ptemp;
+		}
+	}
+	return nullptr;
+}
+bool isSBT(Tree* root, vector<int>& vec) {
+	vec.clear();
+	InOrderTraverse(root, vec);
+	for (int i = 1; i < vec.size(); i++) {
+		if (vec[i] <= vec[i - 1]) {
+			return false;
+		}
+	}
+	return true;
+}
+int getMinimumDifference(Tree* root, vector<int>& vec) {
+	vec.clear();
+	InOrderTraverse(root, vec);
+	int result = INT_MAX;
+	if (vec.size() < 2) {
+		return 0;
+	}
+	for (int i = 1; i < vec.size(); i++) {
+		result = min(result, abs(vec[i] - vec[i - 1]));
+	}
+	return result;
+}
 //二叉树节点的深度：指从根节点到该节点的最长简单路径边的条数。
 //二叉树节点的高度：指从该节点到叶子节点的最长简单路径边的条数。
 int main()
 {
-
-	vector<int> Treevalue;
+	vector<vector<int>> Treevalue;
 	Tree* root;
-	create(root);
+	//create(root);
 	/*PreOrderTraverse(root, Treevalue);
 	for (int i = 0; i < Treevalue.size(); i++)
 	{
 		cout << Treevalue.at(i) << endl;
 	}*/
-	cout << getminDepthByIteration(root) << endl;
+	//cout << getminDepthByIteration(root) << endl;
+	vector<int> nums;
+	nums.push_back(3);
+	nums.push_back(2);
+	nums.push_back(1);
+	nums.push_back(6);
+	nums.push_back(5);
+	nums.push_back(0);
+	root = CreateMaxTree(nums);
+	levelOrder(root, Treevalue);
+	for (int i = 0; i < Treevalue.size(); i++) {
+		for (int j = 0; j < Treevalue.at(i).size(); j++) {
+			cout << Treevalue.at(i).at(j);
+		}
+		cout << endl;
+	}
 	return 0;
 }
