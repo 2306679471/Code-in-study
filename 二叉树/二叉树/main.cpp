@@ -3,6 +3,9 @@
 #include<vector>
 #include<stack>
 #include<queue>
+#include<map>
+#include<unordered_map>
+#define CC_SAFE_DELETE(p) do{delete p;p=nullptr;}while(0)
 using namespace std;
 /*
 深度优先遍历： 前 中 后序遍历	有递归跟非递归（迭代法）的方式
@@ -19,7 +22,6 @@ struct Tree
 	Tree* rchild;
 	Tree(int a) :a(a), lchild(nullptr), rchild(nullptr){}
 };
-
 void create(Tree* &root)
 {
 	int ch;
@@ -39,7 +41,7 @@ void PreOrderTraverse(Tree* phead,vector<int>& vec)
 {
 	if (phead == nullptr)
 	{
-		vec.push_back(NULL);
+		//vec.push_back(NULL);
 		return;
 	}
 	vec.push_back(phead->a);
@@ -50,7 +52,7 @@ void InOrderTraverse(Tree* phead, vector<int>& vec)
 {
 	if (phead == nullptr)
 	{
-		vec.push_back(NULL);
+		//vec.push_back(NULL);
 		return;
 	}
 	InOrderTraverse(phead->lchild, vec);
@@ -61,7 +63,7 @@ void PostOrderTraverse(Tree* phead,vector<int>& vec)
 {
 	if (phead == nullptr)
 	{
-		vec.push_back(NULL);
+		//vec.push_back(NULL);
 		return;
 	}
 	PostOrderTraverse(phead->lchild,vec);
@@ -70,6 +72,16 @@ void PostOrderTraverse(Tree* phead,vector<int>& vec)
 }
 void PreOrderTraverseBystack(Tree* root, vector<int>& vec)//前序迭代遍历
 {
+	/*if (!root) return;
+	stack<Tree*> st;
+	st.push(root);
+	while (!st.empty()) {
+		Tree* ptemp = st.top();
+		st.pop();
+		vec.push_back(ptemp->a);
+		if (ptemp->rchild) st.push(ptemp->rchild);
+		if (ptemp->lchild) st.push(ptemp->lchild);
+	}*/
 	if (!root) return;
 	stack<Tree*> st;
 	st.push(root);
@@ -78,10 +90,12 @@ void PreOrderTraverseBystack(Tree* root, vector<int>& vec)//前序迭代遍历
 		Tree* ptemp = st.top();
 		if (ptemp)
 		{
+			st.pop();
 			if (ptemp->rchild)
 			{
 				st.push(ptemp->rchild);
 			}
+			
 			if (ptemp->lchild)
 			{
 				st.push(ptemp->lchild);
@@ -91,6 +105,7 @@ void PreOrderTraverseBystack(Tree* root, vector<int>& vec)//前序迭代遍历
 		}
 		else
 		{
+			st.pop();
 			vec.push_back(st.top()->a);
 			st.pop();
 		}
@@ -98,6 +113,21 @@ void PreOrderTraverseBystack(Tree* root, vector<int>& vec)//前序迭代遍历
 }
 void InOrderTraverseBystack(Tree* root, vector<int>& vec)//中序迭代遍历
 {
+	/*if (!root) return;
+	stack<Tree*> st;
+	Tree* cur = root;
+	while (cur !=nullptr || !st.empty()) {
+		if (cur != nullptr) {
+			st.push(cur);
+			cur = cur->lchild;
+		}
+		else {
+			cur = st.top();
+			st.pop();
+			vec.push_back(cur->a);
+			cur = cur->rchild;
+		}
+	}*/
 	if (!root) return;
 	stack<Tree*> st;
 	st.push(root);
@@ -106,6 +136,7 @@ void InOrderTraverseBystack(Tree* root, vector<int>& vec)//中序迭代遍历
 		Tree* ptemp = st.top();
 		if (ptemp)
 		{
+			st.pop();
 			if (ptemp->rchild)
 			{
 				st.push(ptemp->rchild);
@@ -119,6 +150,7 @@ void InOrderTraverseBystack(Tree* root, vector<int>& vec)//中序迭代遍历
 		}
 		else
 		{
+			st.pop();
 			vec.push_back(st.top()->a);
 			st.pop();
 		}
@@ -134,6 +166,7 @@ void PostOrderTraverseBystack(Tree* root, vector<int>& vec)//后序迭代遍历
 		Tree* ptemp = st.top();
 		if (ptemp)
 		{
+			st.pop();
 			st.push(ptemp);
 			st.push(nullptr);
 			if (ptemp->rchild)
@@ -147,6 +180,7 @@ void PostOrderTraverseBystack(Tree* root, vector<int>& vec)//后序迭代遍历
 		}
 		else
 		{
+			st.pop();
 			vec.push_back(st.top()->a);
 			st.pop();
 		}
@@ -187,8 +221,8 @@ Tree* Reversetreethroughrecursion(Tree* root)//通过递归反转树
 		return root;
 	}
 	swap(root->lchild, root->rchild);
-	Reversetreethroughrecursion(root->lchild);
-	Reversetreethroughrecursion(root->rchild);
+	root->lchild= Reversetreethroughrecursion(root->lchild);
+	root->rchild= Reversetreethroughrecursion(root->rchild);
 	return root;
 }
 Tree* Reversetreethroughiteration(Tree* root)//通过迭代反转树
@@ -379,12 +413,12 @@ vector<string> allpathoftree(Tree* root)
 		if (ptemp->rchild)
 		{
 			treest.push(ptemp->rchild);
-			pathst.push(path + "->" + to_string(ptemp->a));
+			pathst.push(path + "->" + to_string(ptemp->rchild->a));
 		}
 		if (ptemp->lchild)
 		{
 			treest.push(ptemp->lchild);
-			pathst.push(path + "->" + to_string(ptemp->a));
+			pathst.push(path + "->" + to_string(ptemp->lchild->a));
 		}
 	}
 	return result;
@@ -465,14 +499,14 @@ Tree* CreateMaxTree(vector<int> nums) {//创建最大二叉树
 		return root;
 	}
 	int maxindex=0;
-	int maxvalue=0;
+	int Maxvalue=0;
 	for (int i = 0; i < nums.size(); i++) {
-		if (nums[i]>maxvalue) {
+		if (nums[i]>Maxvalue) {
 			maxindex = i;
-			maxvalue = nums[i];
+			Maxvalue = nums[i];
 		}
 	}
-	root->a = maxvalue;
+	root->a = Maxvalue;
 	if (maxindex > 0) {
 		vector<int> newVec(nums.begin(), nums.begin() + maxindex);
 		root->lchild = CreateMaxTree(newVec);
@@ -532,10 +566,10 @@ Tree* MergeTwoTreesByiterarion(Tree* root1, Tree* root2) {
 	return root1;
 }
 Tree* SearchBST(Tree* root,int val) {//在有序树中找到符合条件的节点
-	if (!root || root->a == val) {
-		return root;
-	}
-	return root->a > val ? SearchBST(root->lchild, val) : SearchBST(root->rchild, val);
+	if (!root || root->a == val) return root;
+	if (root->a > val) return SearchBST(root->lchild,val);
+	if (root->a < val) return SearchBST(root->rchild, val);
+	return nullptr;
 }
 Tree* SearchBSTByIteration(Tree* root, int val) {//同上，迭代法
 	Tree* ptemp = root;
@@ -552,7 +586,7 @@ Tree* SearchBSTByIteration(Tree* root, int val) {//同上，迭代法
 	}
 	return nullptr;
 }
-bool isSBT(Tree* root, vector<int>& vec) {
+bool isSBT(Tree* root, vector<int>& vec) {//判断是否是搜索树
 	vec.clear();
 	InOrderTraverse(root, vec);
 	for (int i = 1; i < vec.size(); i++) {
@@ -562,7 +596,7 @@ bool isSBT(Tree* root, vector<int>& vec) {
 	}
 	return true;
 }
-int getMinimumDifference(Tree* root, vector<int>& vec) {
+int getMinimumDifference(Tree* root, vector<int>& vec) {//获取最小绝对值
 	vec.clear();
 	InOrderTraverse(root, vec);
 	int result = INT_MAX;
@@ -574,33 +608,183 @@ int getMinimumDifference(Tree* root, vector<int>& vec) {
 	}
 	return result;
 }
+void SearchBSTtoMap(Tree* cur, unordered_map<int, int>& Map) {//遍历树，在map里创建对应的数据
+	if (nullptr == cur) return;
+	Map[cur->a] ++;
+	SearchBSTtoMap(cur->lchild, Map);
+	SearchBSTtoMap(cur->rchild, Map);
+	return;
+}
+bool static cmp(const pair<int, int>& a, const pair<int, int>& b) {//排序条件
+	return a.second > b.second;
+}
+vector<int> findMore(Tree* root) {
+	unordered_map<int, int> map; // key:元素，value:出现频率
+	vector<int> result;
+	if (root == NULL) return result;
+	SearchBSTtoMap(root, map);
+	vector<pair<int, int>> vec(map.begin(), map.end());
+	sort(vec.begin(), vec.end(), cmp); // 给频率排个序
+	result.push_back(vec[0].first);
+	for (int i = 1; i < vec.size(); i++) {
+		// 取最高的放到result数组中
+		if (vec[i].second == vec[0].second) result.push_back(vec[i].first);
+		else break;
+	}
+	return result;
+}
+Tree* LowestCommonAncestor(Tree* root, Tree* p1,Tree* p2) {
+	if (root == p1 || root == p2 || root == nullptr) {
+		return root;
+	}
+	Tree* left = LowestCommonAncestor(root->lchild, p1, p2);//遍历左节点
+	Tree* right = LowestCommonAncestor(root->rchild, p1, p2);/*遍历右节点*/
+	if (left != nullptr && right != nullptr) {//如果当前节点左、右节点的返回值都不是空的话就说明当前节点就是最近的共同祖先
+		return root;
+	}
+	if (left == nullptr) {//如果当前节点的左节点为空的话，说明结果是通过右节点返回的，所以返回右节点
+		return right;
+	}
+	return left;
+}//获取两个节点的最近公共祖先
+void Insert(Tree*& root, int value) { //在搜索树中插入数据
+	if (root == nullptr) {
+		Tree* p = new Tree(value);
+		root = p;
+	}
+	if (value > root->a) {
+		Insert(root->rchild, value);
+	}
+	if (value < root->a) {
+		Insert(root->lchild, value);
+	}
+}
+Tree* DeleteNode(Tree* root, int value) {
+	if (nullptr == root) {
+		return root; // 第一种情况：没找到删除的节点，遍历到空节点直接返回了
+	}
+	if (root->a == value) {// 第二种情况：左右孩子都为空（叶子节点），直接删除节点， 返回NULL为根节点
+		if (root->lchild == nullptr && root->rchild == nullptr) {
+			CC_SAFE_DELETE(root);
+			return nullptr;
+		}
+		else if (root->lchild == nullptr) {// 第三种情况：其左孩子为空，右孩子不为空，删除节点，右孩子补位 ，返回右孩子为根节点
+			auto ptemp = root->rchild;
+			CC_SAFE_DELETE(root);
+			return ptemp;
+		}
+		else if (root->rchild == nullptr) {// 第四种情况：其右孩子为空，左孩子不为空，删除节点，左孩子补位，返回左孩子为根节点
+			auto ptemp = root->lchild;
+			CC_SAFE_DELETE(root);
+			return ptemp;
+		}
+		else {// 第五种情况：左右孩子节点都不为空，则将删除节点的左子树放到删除节点的右子树的最左面节点的左孩子的位置
+			// 并返回删除节点右孩子为新的根节点。
+			Tree* ptemp = root->rchild;
+			while (ptemp->lchild != nullptr) {// 找右子树最左面的节点
+				ptemp = ptemp->lchild;
+			}
+			ptemp->lchild = root->lchild;// 把要删除的节点（root）左子树放在cur的左孩子的位置
+			auto p = root;// 把root节点保存一下，下面来删除
+			root = root->rchild;// 返回旧root的右孩子作为新root
+			CC_SAFE_DELETE(p);// 释放节点内存（这里不写也可以，但C++最好手动释放一下吧）
+			return root;
+		}
+		
+	}
+	if (root->a > value) root->lchild = DeleteNode(root->lchild, value);
+	if (root->a < value) root->rchild = DeleteNode(root->rchild, value);
+	return root;
+}
+Tree* trimBST(Tree* root, int low, int height) {//在[low,height]的区间里面修建二叉树
+	if (root == nullptr) return nullptr;
+	if (root->a < low) {
+		return trimBST(root->rchild, low, height);
+	}
+	if (root->a > height) {
+		return  trimBST(root->lchild, low, height);
+	}
+	root->lchild = trimBST(root->lchild, low, height);
+	root->rchild = trimBST(root->rchild, low, height);
+	return root;
+}
+Tree* TraversalVec(vector<int>& vec, int left, int right) {
+	if (left > right) return nullptr;
+	int mid = left + (right - left) / 2;
+	Tree* root = new Tree(vec[mid]);
+	root->lchild = TraversalVec(vec, left, mid - 1);//修剪数组
+	root->rchild = TraversalVec(vec, mid + 1, right);
+	return root; 
+}
+Tree* SortedArrayToBST(vector<int> vec) {//将有序的数组转换成二叉搜索树
+	Tree* root = TraversalVec(vec, 0, vec.size() - 1);
+	return root;
+}
+int pre;
+void Traversal(Tree*& root) {
+	if (!root) return;
+	Traversal(root->rchild);
+	root->a += pre;
+	pre = root->a;
+	Traversal(root->lchild);
+}
+void TraversalByit(Tree*& root) {
+	if (!root) return ;
+	stack<Tree*> st;
+	st.push(root);
+	while (!st.empty()) {
+		Tree* ptemp = st.top();
+		if (ptemp) {
+			st.pop();
+			if (ptemp->lchild) st.push(ptemp->lchild);
+			st.push(ptemp);
+			st.push(nullptr);
+			if (ptemp->rchild) st.push(ptemp->rchild);
+		}
+		else {
+			st.pop();
+			st.top()->a += pre;
+			pre = st.top()->a;
+			st.pop(); 
+		}
+	}
+}
+Tree* ConverBST(Tree*& root) {
+	pre = 0;
+	TraversalByit(root);
+	return root;
+}
 //二叉树节点的深度：指从根节点到该节点的最长简单路径边的条数。
 //二叉树节点的高度：指从该节点到叶子节点的最长简单路径边的条数。
 int main()
 {
-	vector<vector<int>> Treevalue;
+	/*vector<int> vec;
+	vec.push_back(1);
+	vec.push_back(2);
+	vec.push_back(3);
+	vec.push_back(4);
+	vec.push_back(5);
+	vec.push_back(6);
+	vec.push_back(7);
+
 	Tree* root;
-	//create(root);
-	/*PreOrderTraverse(root, Treevalue);
-	for (int i = 0; i < Treevalue.size(); i++)
-	{
-		cout << Treevalue.at(i) << endl;
-	}*/
-	//cout << getminDepthByIteration(root) << endl;
-	vector<int> nums;
-	nums.push_back(3);
-	nums.push_back(2);
-	nums.push_back(1);
-	nums.push_back(6);
-	nums.push_back(5);
-	nums.push_back(0);
-	root = CreateMaxTree(nums);
-	levelOrder(root, Treevalue);
-	for (int i = 0; i < Treevalue.size(); i++) {
-		for (int j = 0; j < Treevalue.at(i).size(); j++) {
-			cout << Treevalue.at(i).at(j);
+	root = SortedArrayToBST(vec);
+	vector<vector<int>> value;
+	levelOrder(root, value);
+	for (int i = 0; i < value.size(); i++) {
+		for (int j = 0; j < value.at(i).size(); j++) {
+			cout << value.at(i)[j] << "  ";
 		}
 		cout << endl;
+	}*/
+	Tree* root;
+	create(root);
+	root = ConverBST(root);
+	vector<int> vec;
+	InOrderTraverseBystack(root, vec);
+	for each (int var in vec)
+	{
+		cout << var << "  ";
 	}
 	return 0;
 }
